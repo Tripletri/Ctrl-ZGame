@@ -55,5 +55,10 @@ namespace CtrlZ
                 graphics.DrawImage(gameObject.Item2.Image, gameObject.Item1.Position);
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            currentLevel = game.CollisionTest();
+        }
     }
 }

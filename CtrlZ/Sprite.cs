@@ -7,6 +7,7 @@ namespace CtrlZ
     class Sprite : Transform, ITexture, ISprite
     {
         public Sprite(RectangleF rectangle) : this(rectangle, new Bitmap("sprites/default.jpg")) { }
+
         public Sprite(RectangleF rectangle, Bitmap bmp) : base(rectangle.Location)
         {
             Image = ResizeImage(bmp, (int) rectangle.Width, (int) rectangle.Height);
@@ -18,16 +19,7 @@ namespace CtrlZ
         public virtual Image Image
         {
             get => image;
-            set
-            {
-                #if DEBUG
-                using (var graphics = Graphics.FromImage(value))
-                {
-                    graphics.DrawRectangle(new Pen(Color.GreenYellow, 3), 0, 0, value.Width, value.Height);
-                }
-                #endif
-                image = value;
-            }
+            set => image = value;
         }
 
         public static Bitmap ResizeImage(Image image, int width, int height)
@@ -50,7 +42,12 @@ namespace CtrlZ
                     wrapMode.SetWrapMode(WrapMode.TileFlipXY);
                     graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel);
                 }
+
+                #if DEBUG
+                graphics.DrawRectangle(new Pen(Color.GreenYellow, 3), 0, 0, destImage.Width, destImage.Height);
+                #endif
             }
+
 
             return destImage;
         }
