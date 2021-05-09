@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
 
-namespace CtrlZ
+namespace CtrlZ.Engine
 {
-    class Animator
+    internal class Animator
     {
         public event Action AnimationUpdated;
         //public List<AnimatedSprite> Animations =  new List<AnimatedSprite>();

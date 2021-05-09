@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using static CtrlZ.Engine.Intersection;
 
-namespace CtrlZ
+namespace CtrlZ.Engine
 {
     internal class Square : Transform, ICollider, IPhysics, ISprite
     {
         protected Sprite Sprite;
 
         private PointF velocity = new PointF();
-
-        public event Action<ICollider> OnCollision;
-        public event Action<ICollider> OnTrigger;
 
         public Square(Rectangle rectangle) : base(rectangle.Location)
         {
@@ -25,7 +23,7 @@ namespace CtrlZ
             Sprite = new Sprite(rectangle, bmp);
         }
 
-        public Square(Rectangle rectangle, AnimatedSprite animatedSprite) : this(rectangle)
+        public Square(Rectangle rectangle, Sprite animatedSprite) : this(rectangle)
         {
             Sprite = animatedSprite;
         }
@@ -33,7 +31,6 @@ namespace CtrlZ
         public Square(Rectangle rectangle, Animator animator, int delay, List<Image> images) : this(rectangle,
             new AnimatedSprite(animator, rectangle, delay, images)) { }
 
-        public bool Static { get; set; } = true;
         public PointF SlidingFrictionForce { get; private set; } = new PointF();
         public PointF GravityForce => new PointF(0, Gravity * Mass);
         public float Gravity { get; } = 0.4f;
@@ -48,6 +45,18 @@ namespace CtrlZ
                 return deltaVelocity / Mass;
             }
         }
+
+        public event Action<ICollider> OnCollision;
+        public event Action<ICollider> OnTrigger;
+
+        public void InvokeTrigger(ICollider other)
+        {
+            OnTrigger?.Invoke(other);
+        }
+
+        public bool MovableStatic { get; set; }
+
+        public bool Static { get; set; } = true;
         public RectangleF ColliderArea { get; set; }
 
         public RectangleF CollideRectangle =>
@@ -56,13 +65,10 @@ namespace CtrlZ
                 ColliderArea.Width,
                 ColliderArea.Height);
 
-        public float FrictionCoefficient { get; set; } = 1;
-        public bool CalculateFriction { get; set; } = true;
-
         public bool Collision { get; set; } = true;
         public PointF Velocity
         {
-            get => Static ? new PointF(0, 0) : velocity;
+            get => velocity;
             set => velocity = value;
         }
 
@@ -72,8 +78,8 @@ namespace CtrlZ
                 return;
             Velocity += Acceleration;
             foreach (var collider in colliders.Where(IsIntersectsWith))
-                if (collider is IPhysics physics)
-                    ProceedPhysics(physics, collider);
+                if (collider is IPhysics)
+                    ProceedPhysics(collider);
         }
 
         public void Move(IReadOnlyCollection<ICollider> colliders)
@@ -91,6 +97,9 @@ namespace CtrlZ
             if (!intersected)
                 SlidingFrictionForce.Zero();
         }
+
+        public float FrictionCoefficient { get; set; } = 1;
+        public bool CalculateFriction { get; set; } = true;
 
         public Sprite GetSprite()
         {
@@ -135,56 +144,67 @@ namespace CtrlZ
                 return RectangleF.Empty;
 
             OnTrigger?.Invoke(other);
+            other.InvokeTrigger(this);
             if (Static || !Collision || !other.Collision)
                 return RectangleF.Empty;
             OnCollision?.Invoke(other);
 
             var intersection = RectangleF.Intersect(CollideRectangle, other.CollideRectangle);
-            if (intersection.Width > intersection.Height)
+            var intersectionType = GetIntersectionType(CollideRectangle, other.CollideRectangle);
+
+            if ((intersectionType == IntersectionType.Right
+                 || intersectionType == IntersectionType.Left) && other.Static)
+                Velocity.X = 0;
+            switch (intersectionType)
             {
-                //on top/bottom
-                if (intersection.Top == other.CollideRectangle.Top)
-                {
-                    //on top
-                    SetY(other.CollideRectangle.Top - CollideRectangle.Height);
+                case IntersectionType.Left:
+                    SetX(other.CollideRectangle.Left - CollideRectangle.Width);
+                    break;
+                case IntersectionType.Right:
+                    SetX(other.CollideRectangle.Right);
+                    break;
+                case IntersectionType.Top:
+                    SetY(other.CollideRectangle.Top - CollideRectangle.Height + other.Velocity.Y);
                     if (velocity.Y > 0)
                         Velocity.Y = 0;
-                }
-                else if (intersection.Bottom == other.CollideRectangle.Bottom)
-                {
-                    //on bottom
+                    break;
+                case IntersectionType.Bottom:
                     SetY(other.CollideRectangle.Bottom);
-                    Velocity.Y = 0;
-                }
-            }
-            else
-            {
-                //on right/left
-                var distToRight = Math.Abs(intersection.Right - CollideRectangle.Right);
-                var distToLeft = Math.Abs(intersection.Left - CollideRectangle.Left);
-                if (distToRight < distToLeft) //lefter
-                    SetX(other.CollideRectangle.Left - CollideRectangle.Width);
-                else //righter
-                    SetX(other.CollideRectangle.Right);
+                    if (Velocity.Y < 0)
+                        Velocity.Y = 0;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
             return intersection;
         }
 
-        private void ProceedPhysics(IPhysics physics, ICollider collider)
+        private void ProceedPhysics(ICollider collider)
         {
             var avgSpeed = (collider.Velocity + Velocity) / 2;
-            var intersection = RectangleF.Intersect(PredictCollider(this), collider.CollideRectangle);
+            if (collider.Static || Static)
+                avgSpeed.Zero();
+            if (collider.MovableStatic)
+                avgSpeed = collider.Velocity;
 
+            var intersection = RectangleF.Intersect(PredictCollider(this), collider.CollideRectangle);
             if (Math.Abs(intersection.Height - intersection.Width) < 5)
                 return;
-            if (intersection.Width > intersection.Height)
-                //on top/bottom
-                ProceedFriction(physics);
+            var intersectionType = GetIntersectionType(PredictCollider(this), collider.CollideRectangle);
+            if (intersectionType == IntersectionType.Bottom || intersectionType == IntersectionType.Top)
+                
+            {
+                //ProceedFriction(physics);
+                if (Math.Abs(Velocity.X) > 0.1)
+                    Velocity.X -= 0.1f * (Velocity.X / Math.Abs(Velocity.X));
+                else
+                    Velocity.X = 0;
+            }
             else
-                //on right/left
-                collider.Velocity.X = avgSpeed.X;
+                collider.Velocity = new PointF(avgSpeed.X, collider.Velocity.Y);
         }
 
+        //Deprecated
         private void ProceedFriction(IPhysics physics)
         {
             if (!physics.CalculateFriction || !CalculateFriction)

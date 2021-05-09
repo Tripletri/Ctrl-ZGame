@@ -2,17 +2,15 @@
 using System.Drawing;
 using System.Linq;
 
-namespace CtrlZ
+namespace CtrlZ.Engine
 {
-    class AnimatedSprite : Sprite
+    internal class AnimatedSprite : Sprite
     {
-        private List<Image> images = new List<Image>();
-        private int delay;
-        private int ticks;
         private Image currentImage;
         private int currentImageId;
-
-        public override Image Image => currentImage;
+        private readonly int delay;
+        private readonly List<Image> images = new List<Image>();
+        private int ticks;
 
         public AnimatedSprite(Animator animator, Rectangle rectangle, int delay, List<Image> images, int zIndex = 0) :
             base(rectangle)
@@ -20,13 +18,17 @@ namespace CtrlZ
             this.delay = delay;
             currentImageId = 0;
             foreach (var image in images)
-            {
                 this.images.Add(ResizeImage(image, rectangle.Width, rectangle.Height));
-            }
             currentImage = this.images[currentImageId];
             animator.AnimationUpdated += AnimatorAnimationUpdated;
             ZIndex = zIndex;
         }
+
+        public AnimatedSprite(Animator animator, Rectangle rectangle, int delay, params Image[] images) : this(animator,
+            rectangle, delay,
+            images.ToList()) { }
+
+        public override Image Image => currentImage;
 
         private void AnimatorAnimationUpdated()
         {
@@ -38,9 +40,5 @@ namespace CtrlZ
             currentImageId %= images.Count;
             currentImage = images[currentImageId];
         }
-
-        public AnimatedSprite(Animator animator, Rectangle rectangle, int delay, params Image[] images) : this(animator,
-            rectangle, delay,
-            images.ToList()) { }
     }
 }

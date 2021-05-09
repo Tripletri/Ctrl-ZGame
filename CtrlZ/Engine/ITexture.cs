@@ -1,12 +1,12 @@
 ﻿using System.Drawing;
 
-namespace CtrlZ
+namespace CtrlZ.Engine
 {
-    interface ITexture
+    internal interface ITexture
     {
         int ZIndex { get; set; }
         Image Image { get; set; }
-
+        bool Visibility { get; set; }
         bool ReversY { get; set; }
     }
 }

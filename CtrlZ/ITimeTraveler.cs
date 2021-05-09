@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CtrlZ.Engine;
 
 namespace CtrlZ
 {
-    interface ITimeTraveler
+    internal interface ITimeTraveler
     {
-        Rectangle GoBackInTime(int time);
+        ICollider GoBackInTime();
+
+        Sprite GetShadow();
+
     }
 }

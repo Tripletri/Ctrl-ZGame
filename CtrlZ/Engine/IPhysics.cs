@@ -1,9 +1,11 @@
-﻿namespace CtrlZ
+﻿namespace CtrlZ.Engine
 {
-    interface IPhysics
+    internal interface IPhysics
     {
-        float FrictionCoefficient { get; set; }
-        bool CalculateFriction { get; set; }
+        // float FrictionCoefficient { get; set; }
+        // bool CalculateFriction { get; set; }
+
+        float DecelerationSpeed { get; set; }
 
         //void AddImpact(PointF impact);
         //PointF SlidingFrictionForce { get; }

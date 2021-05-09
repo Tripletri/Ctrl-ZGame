@@ -2,9 +2,9 @@
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
-namespace CtrlZ
+namespace CtrlZ.Engine
 {
-    class Sprite : Transform, ITexture, ISprite
+    internal class Sprite : Transform, ITexture, ISprite
     {
         public Sprite(RectangleF rectangle) : this(rectangle, new Bitmap("sprites/default.jpg")) { }
 
@@ -13,6 +13,12 @@ namespace CtrlZ
             Image = ResizeImage(bmp, (int) rectangle.Width, (int) rectangle.Height);
         }
 
+        public Sprite GetSprite()
+        {
+            return this;
+        }
+
+        public bool Visibility { get; set; } = true;
         public int ZIndex { get; set; }
 
         public virtual Image Image { get; set; }
@@ -20,7 +26,7 @@ namespace CtrlZ
 
         public static Bitmap ResizeImage(Image image, float scale)
         {
-            return ResizeImage(image, (int)(image.Width * scale), (int)(image.Height * scale));
+            return ResizeImage(image, (int) (image.Width * scale), (int) (image.Height * scale));
         }
 
         public static Bitmap ResizeImage(Image image, int width, int height)
@@ -28,7 +34,7 @@ namespace CtrlZ
             if (width == 0 || height == 0)
                 return new Bitmap(1, 1);
             var destRect = new Rectangle(0, 0, width, height);
-            
+
             var destImage = new Bitmap(width, height);
 
             destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
@@ -52,11 +58,6 @@ namespace CtrlZ
                 #endif
             }
             return destImage;
-        }
-
-        public Sprite GetSprite()
-        {
-            return this;
         }
     }
 }
