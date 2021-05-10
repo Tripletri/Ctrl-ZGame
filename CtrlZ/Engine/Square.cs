@@ -8,9 +8,19 @@ namespace CtrlZ.Engine
 {
     internal class Square : Transform, ICollider, IPhysics, ISprite
     {
+        private bool calculateFrictionThisFrame;
         protected Sprite Sprite;
 
-        private PointF velocity = new PointF();
+        public PointF GravityForce => new PointF(0, 0.4f);
+        public PointF Acceleration
+        {
+            get
+            {
+                var deltaVelocity = new PointF();
+                deltaVelocity += GravityForce;
+                return deltaVelocity;
+            }
+        }
 
         public Square(Rectangle rectangle) : base(rectangle.Location)
         {
@@ -31,21 +41,6 @@ namespace CtrlZ.Engine
         public Square(Rectangle rectangle, Animator animator, int delay, List<Image> images) : this(rectangle,
             new AnimatedSprite(animator, rectangle, delay, images)) { }
 
-        public PointF SlidingFrictionForce { get; private set; } = new PointF();
-        public PointF GravityForce => new PointF(0, Gravity * Mass);
-        public float Gravity { get; } = 0.4f;
-        public float Mass { get; set; } = 1;
-        public PointF Acceleration
-        {
-            get
-            {
-                var deltaVelocity = new PointF();
-                deltaVelocity += SlidingFrictionForce;
-                deltaVelocity += GravityForce;
-                return deltaVelocity / Mass;
-            }
-        }
-
         public event Action<ICollider> OnCollision;
         public event Action<ICollider> OnTrigger;
 
@@ -54,10 +49,17 @@ namespace CtrlZ.Engine
             OnTrigger?.Invoke(other);
         }
 
+        public void InvokeCollision(ICollider other)
+        {
+            OnCollision?.Invoke(other);
+        }
+
         public bool MovableStatic { get; set; }
 
         public bool Static { get; set; } = true;
         public RectangleF ColliderArea { get; set; }
+
+        public PointF FakeVelocity { get; set; } = new PointF();
 
         public RectangleF CollideRectangle =>
             new RectangleF(Position.X + ColliderArea.X,
@@ -66,11 +68,7 @@ namespace CtrlZ.Engine
                 ColliderArea.Height);
 
         public bool Collision { get; set; } = true;
-        public PointF Velocity
-        {
-            get => velocity;
-            set => velocity = value;
-        }
+        public PointF Velocity { get; set; } = new PointF();
 
         public void MovePhysics(IReadOnlyCollection<ICollider> colliders)
         {
@@ -84,22 +82,14 @@ namespace CtrlZ.Engine
 
         public void Move(IReadOnlyCollection<ICollider> colliders)
         {
-            Position += Velocity;
-
-            var intersected = false;
+            calculateFrictionThisFrame = false;
+            Position += Velocity + FakeVelocity;
             foreach (var collider in colliders)
-            {
-                var intersection = ResolveCollision(collider);
-                if (!intersection.IsEmpty)
-                    intersected = true;
-            }
-
-            if (!intersected)
-                SlidingFrictionForce.Zero();
+                ResolveCollision(collider);
         }
 
         public float FrictionCoefficient { get; set; } = 1;
-        public bool CalculateFriction { get; set; } = true;
+        public float DecelerationSpeed { get; set; }
 
         public Sprite GetSprite()
         {
@@ -138,18 +128,18 @@ namespace CtrlZ.Engine
             return !(other == this || !PredictCollider(this).IntersectsWith(other.CollideRectangle));
         }
 
-        public RectangleF ResolveCollision(ICollider other)
+        public void ResolveCollision(ICollider other)
         {
             if (other == this || !other.CollideRectangle.IntersectsWith(CollideRectangle))
-                return RectangleF.Empty;
+                return;
 
             OnTrigger?.Invoke(other);
             other.InvokeTrigger(this);
             if (Static || !Collision || !other.Collision)
-                return RectangleF.Empty;
+                return;
             OnCollision?.Invoke(other);
+            other.InvokeCollision(this);
 
-            var intersection = RectangleF.Intersect(CollideRectangle, other.CollideRectangle);
             var intersectionType = GetIntersectionType(CollideRectangle, other.CollideRectangle);
 
             if ((intersectionType == IntersectionType.Right
@@ -165,7 +155,7 @@ namespace CtrlZ.Engine
                     break;
                 case IntersectionType.Top:
                     SetY(other.CollideRectangle.Top - CollideRectangle.Height + other.Velocity.Y);
-                    if (velocity.Y > 0)
+                    if (Velocity.Y > 0)
                         Velocity.Y = 0;
                     break;
                 case IntersectionType.Bottom:
@@ -176,7 +166,6 @@ namespace CtrlZ.Engine
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            return intersection;
         }
 
         private void ProceedPhysics(ICollider collider)
@@ -191,35 +180,44 @@ namespace CtrlZ.Engine
             if (Math.Abs(intersection.Height - intersection.Width) < 5)
                 return;
             var intersectionType = GetIntersectionType(PredictCollider(this), collider.CollideRectangle);
-            if (intersectionType == IntersectionType.Bottom || intersectionType == IntersectionType.Top)
-                
-            {
-                //ProceedFriction(physics);
-                if (Math.Abs(Velocity.X) > 0.1)
-                    Velocity.X -= 0.1f * (Velocity.X / Math.Abs(Velocity.X));
-                else
-                    Velocity.X = 0;
-            }
-            else
+            if (intersectionType == IntersectionType.Top)
+                ProceedFriction(collider);
+            else if (intersectionType != IntersectionType.Bottom)
                 collider.Velocity = new PointF(avgSpeed.X, collider.Velocity.Y);
         }
 
-        //Deprecated
-        private void ProceedFriction(IPhysics physics)
+        private void ProceedFriction(ICollider collider)
         {
-            if (!physics.CalculateFriction || !CalculateFriction)
+            if (calculateFrictionThisFrame)
                 return;
-            var frictionCoefficient = (FrictionCoefficient + physics.FrictionCoefficient) / 2;
-            if (Math.Abs(Velocity.X) < 0.0001)
+            CalculateFakeVelocity(collider);
+            var fullVelocityX = Velocity.X + FakeVelocity.X;
+            if (Math.Abs(fullVelocityX) > DecelerationSpeed)
+            {
+                var delta = DecelerationSpeed * (fullVelocityX / Math.Abs(fullVelocityX));
+                if (Math.Abs(FakeVelocity.X) > 0)
+                    FakeVelocity.X -= delta;
+                else
+                    Velocity.X -= delta;
+            }
+            else
             {
                 Velocity.X = 0;
-                SlidingFrictionForce.Zero();
-                return;
+                FakeVelocity.X = 0;
             }
-            SlidingFrictionForce =
-                new PointF(-frictionCoefficient * Mass * Gravity * (Math.Abs(Velocity.X) / Velocity.X), 0);
-            if (Math.Abs(Velocity.X) - Math.Abs(SlidingFrictionForce.X) <= 0)
-                Velocity.X = 0;
+            calculateFrictionThisFrame = true;
+        }
+
+        private void CalculateFakeVelocity(ICollider collider)
+        {
+            var coefficient = FrictionCoefficient;
+            if (collider is IPhysics physics)
+            {
+                coefficient += physics.FrictionCoefficient;
+                coefficient /= 2;
+            }
+            FakeVelocity = new PointF((collider.Velocity.X + collider.FakeVelocity.X) * coefficient, 0);
+            //Position.X += collider.Velocity.X;
         }
     }
 }

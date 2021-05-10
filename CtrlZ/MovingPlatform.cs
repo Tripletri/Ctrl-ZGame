@@ -5,7 +5,7 @@ using PointF = CtrlZ.Engine.PointF;
 
 namespace CtrlZ
 {
-    class MovingPlatform : Platform
+    internal class MovingPlatform : Platform
     {
         private bool movingForward = true;
 
@@ -24,7 +24,12 @@ namespace CtrlZ
                 startPosition.X += headSquare.CollideRectangle.Width;
                 endPosition.X -= headSquare.CollideRectangle.Width;
             }
-            else if (startPosition.Y < endPosition.Y)
+            if (startPosition.X < endPosition.X)
+            {
+                startPosition.X -= headSquare.CollideRectangle.Width;
+                endPosition.X += headSquare.CollideRectangle.Width;
+            }
+            if (startPosition.Y < endPosition.Y)
             {
                 startPosition.X -= headSquare.CollideRectangle.Width;
                 endPosition.X += headSquare.CollideRectangle.Width;
@@ -34,15 +39,13 @@ namespace CtrlZ
             var endCollider =
                 new Square(new Rectangle(endPosition, new Size((int) headSquare.CollideRectangle.Width, 1)));
             foreach (var square in squares)
-            {
-                square.OnTrigger += other =>
-                { 
-                    if (other is Player player)
-                        player.Position.X += square.Velocity.X;
-                };
+                //square.OnTrigger += other =>
+                //{ 
+                //    if (other is Player player)
+                //        player.Position.X += square.Velocity.X;
+                //};
                 square.OnStateUpdate += () =>
                 {
-                    //square.Position += moveVector;
                     square.Velocity = moveVector;
                     if (headSquare.IsIntersectsWith(startCollider) && !movingForward)
                     {
@@ -55,7 +58,6 @@ namespace CtrlZ
                         moveVector *= -1;
                     }
                 };
-            }
         }
     }
 }

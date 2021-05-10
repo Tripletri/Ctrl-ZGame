@@ -38,7 +38,7 @@ namespace CtrlZ
         private static Square SquareBuilder(string fileName, PointF position)
         {
             return new Square(new Rectangle(position, new Size(128, 128)),
-                new Bitmap(fileName)) { ColliderArea = new RectangleF(0, 0, 128, 64), MovableStatic = true};
+                new Bitmap(fileName)) { ColliderArea = new RectangleF(0, 0, 128, 64), MovableStatic = true };
         }
 
         public List<Square> CreatePlatform()

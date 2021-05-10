@@ -8,6 +8,8 @@ namespace CtrlZ
         public Box(Rectangle rectangle) : base(rectangle, new Bitmap("sprites/Objects/Box.png"))
         {
             Static = false;
+            DecelerationSpeed = 0.3f;
+            FrictionCoefficient = 0.95f;
         }
     }
 }

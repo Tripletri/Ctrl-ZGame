@@ -19,7 +19,6 @@ namespace CtrlZ
         public Player(Rectangle rectangle, Animator animator) : base(rectangle)
         {
             OnCollision += PlayerOnCollision;
-            CalculateFriction = false;
             Static = false;
             OnStateUpdate += PlayerOnStateUpdate;
 
@@ -72,8 +71,9 @@ namespace CtrlZ
         private void PlayerOnCollision(ICollider collider)
         {
             var intersectionType = GetIntersectionType(CollideRectangle, collider.CollideRectangle);
-            if (collider is Box && collider.Velocity.Y > 0 && intersectionType == IntersectionType.Bottom)
-                Die("Smashed up");
+            if (collider is Box box && collider.Velocity.Y > box.GravityForce.Y
+                                    && intersectionType == IntersectionType.Bottom)
+                Die("Smashed up by box");
             if (isOnFloor)
                 return;
             if (intersectionType == IntersectionType.Top && Velocity.Y > 0)

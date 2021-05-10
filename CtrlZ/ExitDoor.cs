@@ -6,10 +6,10 @@ namespace CtrlZ
 {
     internal class ExitDoor : Square
     {
-        public Action OnLevelCompleted;
-        public bool IsClose { get; private set; }
         private readonly Sprite closeSprite;
         private readonly Sprite openSprite;
+        public Action OnLevelCompleted;
+        public bool IsClose { get; private set; }
 
         public ExitDoor(Rectangle rectangle) : base(rectangle)
         {
@@ -41,9 +41,11 @@ namespace CtrlZ
         }
 
         private void ExitDoorOnTrigger(ICollider otherCollider)
-        { 
-            if (otherCollider is Player && !IsClose)
-                OnLevelCompleted?.Invoke();
+        {
+            if (!(otherCollider is Player) || IsClose)
+                return;
+            OnLevelCompleted?.Invoke();
+            Close();
         }
     }
 }

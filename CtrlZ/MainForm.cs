@@ -16,7 +16,6 @@ namespace CtrlZ
         private readonly Stopwatch mainStopwatch = new Stopwatch();
         private readonly InputManager playerInputManager = new InputManager();
         private readonly InputManager systemInputManager = new InputManager();
-        private bool isLevelChanging;
 
         public MainForm()
         {
@@ -33,7 +32,7 @@ namespace CtrlZ
             #region Levels
 
             Func<Level> introLevel = game.IntroLevel;
-            game.AddLevels(introLevel, game.Level1, game.Level2, game.Level3, game.Level4);
+            game.AddLevels(introLevel, game.Level1, game.Level2, game.Level3, game.Level4, game.Level5);
             game.LoadLevel(introLevel, game.LoadNextLevel);
 
             //game.LoadLevel(game.IntroLevel, () =>
@@ -41,7 +40,7 @@ namespace CtrlZ
             //        game.LoadLevel(game.Level2, () =>
             //            game.LoadLevel(game.Level3))));
 
-            game.LoadLevel(game.Level1, () => game.RestartCurrentLevel());
+            //game.LoadLevel(game.Level5, () => game.LoadLevel(introLevel));
 
             #endregion
 

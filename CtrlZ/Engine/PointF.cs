@@ -5,6 +5,11 @@ namespace CtrlZ.Engine
 {
     internal class PointF
     {
+        public float X { get; set; }
+        public float Y { get; set; }
+
+        public double Length => Math.Sqrt(X * X + Y * Y);
+
         public PointF(float x, float y)
         {
             X = x;
@@ -12,10 +17,6 @@ namespace CtrlZ.Engine
         }
 
         public PointF() : this(0, 0) { }
-        public float X { get; set; }
-        public float Y { get; set; }
-
-        public double Length => Math.Sqrt(X * X + Y * Y);
 
         public void Zero()
         {
@@ -25,7 +26,7 @@ namespace CtrlZ.Engine
 
         public PointF Normalize()
         {
-            return new PointF(X / (float)Length, Y / (float)Length);
+            return new PointF(X / (float) Length, Y / (float) Length);
         }
 
         public static implicit operator PointF(System.Drawing.PointF systemPoint)

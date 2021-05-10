@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace CtrlZ
 {
-    class LimitedSizeQueue<T>
+    internal class LimitedSizeQueue<T>
     {
-        private int limit;
-        private LinkedList<T> list = new LinkedList<T>();
+        private readonly int limit;
+        private readonly LinkedList<T> list = new LinkedList<T>();
+
+        public T Last => list.First.Value;
+
+        public T First => list.Last.Value;
 
         public LimitedSizeQueue(int limit)
         {
@@ -23,11 +23,9 @@ namespace CtrlZ
             list.AddLast(item);
         }
 
-        public T Last => list.First.Value;
-
-        public T First => list.Last.Value;
-
-        public void Clear() =>
+        public void Clear()
+        {
             list.Clear();
+        }
     }
 }

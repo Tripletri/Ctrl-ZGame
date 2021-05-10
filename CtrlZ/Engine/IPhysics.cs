@@ -2,7 +2,7 @@
 {
     internal interface IPhysics
     {
-        // float FrictionCoefficient { get; set; }
+        float FrictionCoefficient { get; set; }
         // bool CalculateFriction { get; set; }
 
         float DecelerationSpeed { get; set; }

@@ -3,6 +3,5 @@
     internal interface ISprite
     {
         Sprite GetSprite();
-
     }
 }

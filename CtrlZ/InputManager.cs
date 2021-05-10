@@ -27,12 +27,20 @@ namespace CtrlZ
                     }
                 }
                 else if (heldKeys.Contains(bind.Key))
+                {
                     heldKeys.Remove(bind.Key);
+                }
         }
     }
 
     internal class Bind
     {
+        public Key Key { get; set; }
+        public Action Action { get; set; }
+        public bool AllowHold { get; set; }
+
+        public string Description { get; }
+
         public Bind(Key key, Action action, bool allowHold, string description = null)
         {
             Key = key;
@@ -40,11 +48,5 @@ namespace CtrlZ
             AllowHold = allowHold;
             Description = description;
         }
-
-        public Key Key { get; set; }
-        public Action Action { get; set; }
-        public bool AllowHold { get; set; }
-
-        public string Description { get; private set; }
     }
 }

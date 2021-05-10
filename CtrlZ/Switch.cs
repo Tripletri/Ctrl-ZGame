@@ -4,11 +4,11 @@ using CtrlZ.Engine;
 
 namespace CtrlZ
 {
-    class Switch : Square
+    internal class Switch : Square
     {
-        private Sprite onSprite;
-        private Sprite offSprite;
-        private Action<Player> onPlayerEnter;
+        private readonly Sprite offSprite;
+        private readonly Action<Player> onPlayerEnter;
+        private readonly Sprite onSprite;
 
         public Switch(Rectangle rectangle, Action<Player> onPlayerEnter) : base(rectangle)
         {

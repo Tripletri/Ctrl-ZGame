@@ -11,15 +11,14 @@ namespace CtrlZ
 {
     internal class Game
     {
-        public Level CurrentLevel { get; private set; }
         public readonly LinkedList<Func<Level>> LevelOrder = new LinkedList<Func<Level>>();
-        public event Action OnLevelChanged;
 
         private Rectangle clientSize;
         private Func<Level> currentLevel;
+        private readonly InputManager[] inputManagers;
         private Action onCurrentLevelComplete;
-        private InputManager[] inputManagers;
-        private Sprite settings;
+        private readonly Sprite settings;
+        public Level CurrentLevel { get; private set; }
 
         public Game(Rectangle clientSize, params InputManager[] inputManagers)
         {
@@ -28,6 +27,8 @@ namespace CtrlZ
 
             settings = new Sprite(clientSize) { Visibility = false };
         }
+
+        public event Action OnLevelChanged;
 
         public void LoadNextLevel()
         {
@@ -65,7 +66,9 @@ namespace CtrlZ
         public void ShowSetting()
         {
             if (settings.Visibility)
+            {
                 settings.Visibility = false;
+            }
             else
             {
                 var textBitmap = new Bitmap(clientSize.Width, clientSize.Height);
@@ -94,7 +97,7 @@ namespace CtrlZ
 
         public Level IntroLevel()
         {
-            var lvl = new Level(clientSize.Size, "Salutations, voyageur.");
+            var lvl = new Level(clientSize.Size, "Salutations, voyageur");
             var exitDoor = new ExitDoor(new Rectangle(1389, 693, 85, 140));
             lvl.AddObject(exitDoor);
             var textBitmap = new Bitmap(clientSize.Width, clientSize.Height);
@@ -121,6 +124,8 @@ namespace CtrlZ
             graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
             graphics.DrawString(text, font, Brushes.White, size, stringFormat);
         }
+
+        #region Levels
 
         public Level Level1()
         {
@@ -183,7 +188,7 @@ namespace CtrlZ
 
         public Level Level5()
         {
-            var lvl = new Level(clientSize.Size);
+            var lvl = new Level(clientSize.Size, "Carefully");
             var exitDoor = new ExitDoor(new Rectangle(84, 333, 85, 140), true);
             lvl.AddObject(new Switch(new Rectangle(1445, 660, 48, 171), player => exitDoor.Open()));
             lvl.AddObject(exitDoor);
@@ -195,10 +200,12 @@ namespace CtrlZ
             lvl.AddObjects(new Platform(new PointF(1121, 652), 1).CreatePlatform());
             lvl.AddObjects(new Platform(new PointF(1249, 587), 1).CreatePlatform());
             lvl.AddObjects(new Platform(new PointF(825, 281), 1).CreatePlatform());
-            lvl.AddObjects(new Platform(new PointF(63, 473), 1).CreatePlatform());
-            lvl.AddObject(new TimeTravelBox(new Rectangle(1104,264,115,115),600));
-            lvl.AddObject(new Box(new Rectangle(952,662,169,169)));
+            lvl.AddObjects(new Platform(new PointF(63, 473), 2).CreatePlatform());
+            lvl.AddObject(new TimeTravelBox(new Rectangle(1104, 264, 115, 115), 300));
+            lvl.AddObject(new Box(new Rectangle(952, 662, 169, 169)));
             return lvl;
         }
+
+        #endregion
     }
 }

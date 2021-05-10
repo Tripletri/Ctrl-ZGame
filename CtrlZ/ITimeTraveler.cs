@@ -7,6 +7,5 @@ namespace CtrlZ
         ICollider GoBackInTime();
 
         Sprite GetShadow();
-
     }
 }

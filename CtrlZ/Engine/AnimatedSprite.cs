@@ -6,11 +6,13 @@ namespace CtrlZ.Engine
 {
     internal class AnimatedSprite : Sprite
     {
-        private Image currentImage;
-        private int currentImageId;
         private readonly int delay;
         private readonly List<Image> images = new List<Image>();
+        private Image currentImage;
+        private int currentImageId;
         private int ticks;
+
+        public override Image Image => currentImage;
 
         public AnimatedSprite(Animator animator, Rectangle rectangle, int delay, List<Image> images, int zIndex = 0) :
             base(rectangle)
@@ -27,8 +29,6 @@ namespace CtrlZ.Engine
         public AnimatedSprite(Animator animator, Rectangle rectangle, int delay, params Image[] images) : this(animator,
             rectangle, delay,
             images.ToList()) { }
-
-        public override Image Image => currentImage;
 
         private void AnimatorAnimationUpdated()
         {

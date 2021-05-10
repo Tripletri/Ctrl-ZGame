@@ -1,17 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using CtrlZ.Engine;
 using PointF = CtrlZ.Engine.PointF;
 
 namespace CtrlZ
 {
-    class TimeTravelBox : Box, ITimeTraveler
+    internal class TimeTravelBox : Box, ITimeTraveler
     {
-        private AnimatedSprite shadow;
-        private LimitedSizeQueue<PointF> pastPosition;
+        private readonly Animator animator = new Animator();
+        private readonly LimitedSizeQueue<PointF> pastPosition;
+        private readonly AnimatedSprite shadow;
         private int wrapDelay;
-        private Animator animator = new Animator();
 
         public TimeTravelBox(Rectangle rectangle, int wrapDelay) : base(rectangle)
         {
@@ -30,6 +29,18 @@ namespace CtrlZ
             OnStateUpdate += TimeTravelBoxOnStateUpdate;
         }
 
+        public ICollider GoBackInTime()
+        {
+            Position = pastPosition.Last;
+            pastPosition.Clear();
+            return this;
+        }
+
+        public Sprite GetShadow()
+        {
+            return shadow;
+        }
+
         private void TimeTravelBoxOnStateUpdate()
         {
             animator.UpdateAnimation();
@@ -42,18 +53,6 @@ namespace CtrlZ
             }
             shadow.Position = pastPosition.Last;
             shadow.Visibility = true;
-        }
-
-        public ICollider GoBackInTime()
-        {
-            Position= pastPosition.Last;
-            pastPosition.Clear();
-            return this;
-        }
-
-        public Sprite GetShadow()
-        {
-            return shadow;
         }
     }
 }

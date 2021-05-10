@@ -111,69 +111,21 @@
     <Content Include="sprites\default.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="sprites\Level1.psd">
+    <Content Include="sprites\main\robot\images\robot_01.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sprites\main\attack.png">
+    </Content><Content Include="sprites\main\robot\images\robot_02.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sprites\main\attack\images\attack_01.png">
+    </Content><Content Include="sprites\main\robot\images\robot_03.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sprites\main\attack\images\attack_02.png">
+    </Content><Content Include="sprites\main\robot\images\robot_04.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sprites\main\attack\images\attack_03.png">
+    </Content><Content Include="sprites\main\robot\images\robot_05.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sprites\main\attack\images\attack_04.png">
+    </Content><Content Include="sprites\main\robot\images\robot_06.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sprites\main\attack\images\attack_05.png">
+    </Content><Content Include="sprites\main\robot\images\robot_07.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sprites\main\attack\images\attack_06.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sprites\main\attack\images\attack_07.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sprites\main\attack\images\attack_08.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sprites\main\attack\images\attack_09.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sprites\main\attack\images\attack_10.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sprites\main\robot\images\robot_01.png" />
-    <Content Include="sprites\main\robot\images\robot_02.png" />
-    <Content Include="sprites\main\robot\images\robot_03.png" />
-    <Content Include="sprites\main\robot\images\robot_04.png" />
-    <Content Include="sprites\main\robot\images\robot_05.png" />
-    <Content Include="sprites\main\robot\images\robot_06.png" />
-    <Content Include="sprites\main\robot\images\robot_07.png" />
-    <Content Include="sprites\main\robot\images\robot_08.png" />
-    <Content Include="sprites\main\run\images\Zapper_01.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sprites\main\run\images\Zapper_02.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sprites\main\run\images\Zapper_03.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sprites\main\run\images\Zapper_04.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sprites\main\run\images\Zapper_05.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sprites\main\run\images\Zapper_06.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sprites\main\Zapper_run.psd">
+    </Content><Content Include="sprites\main\robot\images\robot_08.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="sprites\Objects\Barrel %281%29.png">

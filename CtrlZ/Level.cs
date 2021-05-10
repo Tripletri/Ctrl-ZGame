@@ -106,10 +106,8 @@ namespace CtrlZ
                                               && pastCollider.CollideRectangle
                                                   .IntersectsWith(
                                                       collider.CollideRectangle)))
-                {
                     Player.Die(
                         "A time-traveling object collided with another object, resulting in a distortion of space-time.");
-                }
             }
         }
     }
