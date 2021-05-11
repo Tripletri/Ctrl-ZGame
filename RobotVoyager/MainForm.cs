@@ -40,7 +40,7 @@ namespace RobotVoyager
                 game.LastLevel);
             game.LoadLevel(introLevel, game.LoadNextLevel);
 
-            game.LoadLevel(game.LastLevel, () => game.RestartCurrentLevel());
+            //game.LoadLevel(game.Level4, () => game.RestartCurrentLevel());
 
             #endregion
 

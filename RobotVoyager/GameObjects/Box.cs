@@ -8,7 +8,7 @@ namespace RobotVoyager.GameObjects
         public Box(Rectangle rectangle) : base(rectangle, new Bitmap("sprites/Objects/Box.png"))
         {
             Static = false;
-            DecelerationSpeed = 0.3f;
+            DecelerationSpeed = 0.2f;
             FrictionCoefficient = 0.95f;
         }
     }
