@@ -183,7 +183,7 @@ namespace RobotVoyager
             lvl.AddObjects(new Platform(new PointF(758, 631), 1).CreatePlatform());
             lvl.AddObjects(new Platform(new PointF(822, 253), 1).CreatePlatform());
             lvl.Player.Position = new PointF(403, 217);
-            lvl.AddObject(new TimeTravelBox(new Rectangle(574, 391, 115, 115), 300));
+            lvl.AddObject(new TimeTravelBox(new Rectangle(574, 391, 115, 115), 350));
             return lvl;
         }
 
