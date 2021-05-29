@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Input;
 using RobotVoyager.Engine;
+using RobotVoyager.GameObjects;
 using PointF = System.Drawing.PointF;
 
 namespace RobotVoyager
@@ -106,6 +108,7 @@ namespace RobotVoyager
             #if DEBUG
             graphics.DrawString(game.CurrentLevel.GameTicks.ToString(), new Font(FontFamily.GenericMonospace, 16),
                 Brushes.GreenYellow, 0, 0);
+            Debug.WriteLine(game.CurrentLevel.Player.CollideRectangle.Bottom);
             #endif
         }
 

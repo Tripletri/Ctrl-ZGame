@@ -29,21 +29,11 @@ namespace RobotVoyager.GameObjects
                 startPosition.X -= headSquare.CollideRectangle.Width;
                 endPosition.X += headSquare.CollideRectangle.Width;
             }
-            if (startPosition.Y < endPosition.Y)
-            {
-                startPosition.X -= headSquare.CollideRectangle.Width;
-                endPosition.X += headSquare.CollideRectangle.Width;
-            }
             var startCollider =
                 new Square(new Rectangle(startPosition, new Size((int) headSquare.CollideRectangle.Width, 1)));
             var endCollider =
                 new Square(new Rectangle(endPosition, new Size((int) headSquare.CollideRectangle.Width, 1)));
             foreach (var square in squares)
-                //square.OnTrigger += other =>
-                //{ 
-                //    if (other is Player player)
-                //        player.Position.X += square.Velocity.X;
-                //};
                 square.OnStateUpdate += () =>
                 {
                     square.Velocity = moveVector;
