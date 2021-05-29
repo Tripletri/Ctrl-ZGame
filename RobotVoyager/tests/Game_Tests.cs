@@ -88,7 +88,7 @@ namespace RobotVoyager.tests
             ActivatePlayer();
             MovePlayer(x, 10);
             var playerMoveDelta = game.CurrentLevel.Player.Position - playerInitialPosition;
-            if (GetSing(playerMoveDelta.X) == GetSing(x))
+            if (GetSign(playerMoveDelta.X) == GetSign(x))
                 Assert.Pass();
             Assert.Fail();
         }
@@ -155,7 +155,7 @@ namespace RobotVoyager.tests
         [TestCaseSource(nameof(moveCases))]
         public void Square_HitsWallsHorizontally(int x)
         {
-            var wallPosition = testSquare.Position + new PointF(20 * GetSing(x), 0);
+            var wallPosition = testSquare.Position + new PointF(20 * GetSign(x), 0);
             if (x > 0)
                 wallPosition.X += testSquare.CollideRectangle.Width;
             var wall = new Square(new Rectangle(wallPosition, new Size(50, 300)));
@@ -248,7 +248,7 @@ namespace RobotVoyager.tests
             var squares = new List<Square>();
             for (var i = 1; i <= count; i++)
             {
-                var square = new Square(new Rectangle(startPositionX + (100 * i + 10) * GetSing(x), floorLevel - 101,
+                var square = new Square(new Rectangle(startPositionX + (100 * i + 10) * GetSign(x), floorLevel - 101,
                     100,
                     100)) { Static = false, DecelerationSpeed = 0.2f };
                 squares.Add(square);
@@ -320,7 +320,7 @@ namespace RobotVoyager.tests
                 level.Update();
         }
 
-        private int GetSing(float number) =>
+        private int GetSign(float number) =>
             (int) (Math.Abs(number) / number);
     }
 }
